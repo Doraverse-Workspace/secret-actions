@@ -1,6 +1,29 @@
 name: "Fetch Secrets"
 description: "Fetch secrets from Infisical or Doppler based on branch"
 
+inputs:
+  infisical_client_id:
+    description: "Infisical Client ID"
+    required: true
+  infisical_client_secret:
+    description: "Infisical Client Secret"
+    required: true
+  infisical_env_slug:
+    description: "Infisical Environment Slug"
+    required: true
+  infisical_domain:
+    description: "Infisical Domain"
+    required: true
+  infisical_project_slug:
+    description: "Infisical Project Slug"
+    required: true
+  infisical_additional_secret_path:
+    description: "Infisical Additional Secret Path"
+    required: false
+  doppler_token:
+    description: "Doppler Token"
+    required: true
+
 runs:
   using: "composite"
   steps:
@@ -9,23 +32,23 @@ runs:
       if: github.ref_name == 'develop'
       uses: Infisical/secrets-action@v1.0.6
       with:
-        client-id: ${{ secrets.INF_CLIENT_ID }}
-        client-secret: ${{ secrets.INF_CLIENT_SECRET }}
-        env-slug: ${{ secrets.INF_ENV }}
-        domain: ${{ secrets.INF_DOMAIN }}
-        project-slug: ${{ secrets.INF_PROJECT }}
+        client-id: ${{ inputs.infisical_client_id }}
+        client-secret: ${{ inputs.infisical_client_secret }}
+        env-slug: ${{ inputs.infisical_env_slug }}
+        domain: ${{ inputs.infisical_domain }}
+        project-slug: ${{ inputs.infisical_project_slug }}
       shell: bash
 
     - name: Fetch additional secrets for develop
       if: github.ref_name == 'develop'
       uses: Infisical/secrets-action@v1.0.6
       with:
-        client-id: ${{ secrets.INF_CLIENT_ID }}
-        client-secret: ${{ secrets.INF_CLIENT_SECRET }}
-        env-slug: ${{ secrets.INF_ENV }}
-        domain: ${{ secrets.INF_DOMAIN }}
-        project-slug: ${{ secrets.INF_PROJECT }}
-        secret-path: ${{ secrets.INF_ADD_SECRET_PATH }}
+        client-id: ${{ inputs.infisical_client_id }}
+        client-secret: ${{ inputs.infisical_client_secret }}
+        env-slug: ${{ inputs.infisical_env_slug }}
+        domain: ${{ inputs.infisical_domain }}
+        project-slug: ${{ inputs.infisical_project_slug }}
+        secret-path: ${{ inputs.infisical_additional_secret_path }}
       shell: bash
 
     # Fetch release secrets
@@ -34,5 +57,5 @@ runs:
       uses: dopplerhq/secrets-fetch-action@v1.2.0
       with:
         inject-env-vars: true
-        doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+        doppler-token: ${{ inputs.doppler_token }}
       shell: bash 
