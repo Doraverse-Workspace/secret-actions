@@ -1,0 +1,38 @@
+name: "Fetch Secrets"
+description: "Fetch secrets from Infisical or Doppler based on branch"
+
+runs:
+  using: "composite"
+  steps:
+    # Fetch develop secrets
+    - name: Fetch secrets for develop
+      if: github.ref_name == 'develop'
+      uses: Infisical/secrets-action@v1.0.6
+      with:
+        client-id: ${{ secrets.INF_CLIENT_ID }}
+        client-secret: ${{ secrets.INF_CLIENT_SECRET }}
+        env-slug: ${{ secrets.INF_ENV }}
+        domain: ${{ secrets.INF_DOMAIN }}
+        project-slug: ${{ secrets.INF_PROJECT }}
+      shell: bash
+
+    - name: Fetch additional secrets for develop
+      if: github.ref_name == 'develop'
+      uses: Infisical/secrets-action@v1.0.6
+      with:
+        client-id: ${{ secrets.INF_CLIENT_ID }}
+        client-secret: ${{ secrets.INF_CLIENT_SECRET }}
+        env-slug: ${{ secrets.INF_ENV }}
+        domain: ${{ secrets.INF_DOMAIN }}
+        project-slug: ${{ secrets.INF_PROJECT }}
+        secret-path: ${{ secrets.INF_ADD_SECRET_PATH }}
+      shell: bash
+
+    # Fetch release secrets
+    - name: Fetch release secrets
+      if: github.ref_name == 'release' || startsWith(github.ref, 'refs/tags/')
+      uses: dopplerhq/secrets-fetch-action@v1.2.0
+      with:
+        inject-env-vars: true
+        doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+      shell: bash 
