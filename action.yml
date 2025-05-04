@@ -37,7 +37,6 @@ runs:
         env-slug: ${{ inputs.infisical_env_slug }}
         domain: ${{ inputs.infisical_domain }}
         project-slug: ${{ inputs.infisical_project_slug }}
-      shell: bash
 
     - name: Fetch additional secrets for develop
       if: github.ref_name == 'develop'
@@ -49,7 +48,6 @@ runs:
         domain: ${{ inputs.infisical_domain }}
         project-slug: ${{ inputs.infisical_project_slug }}
         secret-path: ${{ inputs.infisical_additional_secret_path }}
-      shell: bash
 
     # Fetch release secrets
     - name: Fetch release secrets
@@ -58,4 +56,3 @@ runs:
       with:
         inject-env-vars: true
         doppler-token: ${{ inputs.doppler_token }}
-      shell: bash 
