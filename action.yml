@@ -23,6 +23,9 @@ inputs:
   doppler_token:
     description: "Doppler Token"
     required: true
+  doppler_staging_token:
+    description: "Doppler Staging Token"
+    required: false
 
 runs:
   using: "composite"
@@ -56,3 +59,11 @@ runs:
       with:
         inject-env-vars: true
         doppler-token: ${{ inputs.doppler_token }}
+
+    # Fetch staging secrets
+    - name: Fetch staging secrets
+      if: github.ref_name == 'staging'
+      uses: dopplerhq/secrets-fetch-action@v1.2.0
+      with:
+        inject-env-vars: true
+        doppler-token: ${{ inputs.doppler_staging_token }}
