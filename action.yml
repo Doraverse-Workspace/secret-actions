@@ -20,7 +20,7 @@ runs:
   steps:
     # Fetch develop secrets
     - name: Fetch develop secrets
-      if: inputs.environment == 'dev'
+      if: inputs.environment == 'develop'
       uses: dopplerhq/secrets-fetch-action@v1.2.0
       with:
         inject-env-vars: true
@@ -36,7 +36,7 @@ runs:
 
     # Fetch production secrets
     - name: Fetch production secrets
-      if: inputs.environment == 'prod'
+      if: inputs.environment == 'release'
       uses: dopplerhq/secrets-fetch-action@v1.2.0
       with:
         inject-env-vars: true
