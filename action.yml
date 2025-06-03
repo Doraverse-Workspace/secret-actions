@@ -1,58 +1,43 @@
 name: "Fetch Secrets"
-description: "Fetch secrets from Infisical or Doppler based on branch"
+description: "Fetch secrets from Doppler based on branch"
 
 inputs:
-  infisical_client_id:
-    description: "Infisical Client ID"
+  environment:
+    description: "Environment"
     required: true
-  infisical_client_secret:
-    description: "Infisical Client Secret"
-    required: true
-  infisical_env_slug:
-    description: "Infisical Environment Slug"
-    required: true
-  infisical_domain:
-    description: "Infisical Domain"
-    required: true
-  infisical_project_slug:
-    description: "Infisical Project Slug"
-    required: true
-  infisical_additional_secret_path:
-    description: "Infisical Additional Secret Path"
+  doppler_develop_token:
+    description: "Doppler Develop Token"
     required: false
-  doppler_token:
-    description: "Doppler Token"
-    required: true
+  doppler_staging_token:
+    description: "Doppler Staging Token"  
+    required: false
+  doppler_production_token:
+    description: "Doppler Production Token"
+    required: false
 
 runs:
   using: "composite"
   steps:
     # Fetch develop secrets
-    - name: Fetch secrets for develop
-      if: github.ref_name == 'develop'
-      uses: Infisical/secrets-action@v1.0.6
-      with:
-        client-id: ${{ inputs.infisical_client_id }}
-        client-secret: ${{ inputs.infisical_client_secret }}
-        env-slug: ${{ inputs.infisical_env_slug }}
-        domain: ${{ inputs.infisical_domain }}
-        project-slug: ${{ inputs.infisical_project_slug }}
-
-    - name: Fetch additional secrets for develop
-      if: github.ref_name == 'develop'
-      uses: Infisical/secrets-action@v1.0.6
-      with:
-        client-id: ${{ inputs.infisical_client_id }}
-        client-secret: ${{ inputs.infisical_client_secret }}
-        env-slug: ${{ inputs.infisical_env_slug }}
-        domain: ${{ inputs.infisical_domain }}
-        project-slug: ${{ inputs.infisical_project_slug }}
-        secret-path: ${{ inputs.infisical_additional_secret_path }}
-
-    # Fetch release secrets
-    - name: Fetch release secrets
-      if: github.ref_name == 'release' || startsWith(github.ref, 'refs/tags/')
+    - name: Fetch develop secrets
+      if: inputs.environment == 'dev'
       uses: dopplerhq/secrets-fetch-action@v1.2.0
       with:
         inject-env-vars: true
-        doppler-token: ${{ inputs.doppler_token }}
+        doppler-token: ${{ inputs.doppler_develop_token }}
+
+    # Fetch staging secrets
+    - name: Fetch staging secrets
+      if: inputs.environment == 'staging'
+      uses: dopplerhq/secrets-fetch-action@v1.2.0
+      with:
+        inject-env-vars: true
+        doppler-token: ${{ inputs.doppler_staging_token }}
+
+    # Fetch production secrets
+    - name: Fetch production secrets
+      if: inputs.environment == 'prod'
+      uses: dopplerhq/secrets-fetch-action@v1.2.0
+      with:
+        inject-env-vars: true
+        doppler-token: ${{ inputs.doppler_production_token }}
